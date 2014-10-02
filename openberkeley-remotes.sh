@@ -1,3 +1,4 @@
+#!/bin/bash
 PROTOCOL='git@'            # change if you use https:// or something else
 DOMAIN='github-bwood.com'  # change depending on your use of ssh-config
 USER='bwood'               # this is your github username
