@@ -1,5 +1,7 @@
 #!/bin/bash
 MODULE=$1
+REPO=$2
+REF=$3
 PATH="profiles/openberkeley/modules/openberkeley"
 DIR="$PATH/$MODULE"
 
@@ -10,6 +12,22 @@ if [ ! -d "$DIR" ] || [ ! -w "$DIR" ]; then
   exit 1
 fi
 
+if [[ $REPO =~ "https://" ]]; then
+  echo "Please use the ssh version of the git url so your key will be used for authentication."
+  exit 1
+fi
+
+if [ -z "$REPO" ]; then
+  REPO=$MODULE-upstream
+fi
+
+if [ -z "$REF" ]; then
+  REF="master"
+fi
+
 git rm -rf $DIR
 git commit -am "Convert $MODULE to subtree"
-git subtree add --prefix=$DIR $MODULE-upstream master --squash
+git subtree add --prefix=$DIR $REPO $REF --squash
+echo ""
+echo "Executed:"
+echo "git subtree add --prefix=$DIR $REPO $REF --squash"
