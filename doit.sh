@@ -1,5 +1,20 @@
 #!/bin/bash
 
+if [ $(PAGER=cat man sed |grep -c -e "^BSD") -gt 0 ]; then
+  # remove datestamps from all .info files
+  # FreeBSD sed (e.g. MacOS)
+  echo "BSD"
+  find modules -name "*.info" -print0 |xargs -0 sed -i "" -e 's/datestamp = \"[[:digit:]]\{1,\}\".*//' -e 's/Information added by drush on [[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\}/Information added by drush/'
+else
+  # remove datestamps from all .info files
+  echo "not BSD"
+  find modules -name "*.info" -print0 |xargs -0 sed -i -e 's/datestamp = \"[[:digit:]]\{1,\}\".*//' -e 's/Information added by drush on [[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\}/Information added by drush/'
+fi
+
+
+exit
+###########
+
 cleanup() {
   # Before proceeding we'll weed out unneeded modules, themes, libraries etc which
   # exist in the site that we are upgrading. This clean up is required if you
