@@ -1,11 +1,21 @@
 #!/bin/bash
+export PATH=~/bin:~/bin/drush:~/bin/utility:/usr/local/bin:/usr/bin:~/workspace/scripts:/Applications/acquia-drupal/mysql/bin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:$PATH:/Users/bwood/pear/bin
+
 MODULE=$1
 REPO=$2
 REF=$3
-PATH="profiles/openberkeley/modules/openberkeley"
-DIR="$PATH/$MODULE"
+PROJDIR="profiles/openberkeley/modules"
 
-export PATH=~/bin:~/bin/drush:~/bin/utility:/usr/bin:/usr/local/bin/git:~/workspace/scripts:/Applications/acquia-drupal/mysql/bin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:$PATH:/Users/bwood/pear/bin
+if [[ $MODULE =~ "openberkeley_" ]]; then
+  SUBDIR="openberkeley"
+elif [[ $MODULE =~ "ucberkeley_" ]]; then
+  SUBDIR="ucb"
+else
+  echo "Can't determine SUBDIR for this module."
+  exit 1
+fi
+
+DIR="$PROJDIR/$SUBDIR/$MODULE"
 
 if [ ! -d "$DIR" ] || [ ! -w "$DIR" ]; then
   echo "Not a valid path or not writable: $DIR"
@@ -25,7 +35,9 @@ if [ -z "$REF" ]; then
   REF="master"
 fi
 
-git rm -rf $DIR
+# use rm. sometimes git rm -rf misses subdirectories. strange.
+rm -rf $DIR
+git add --all
 git commit -am "Convert $MODULE to subtree"
 git subtree add --prefix=$DIR $REPO $REF --squash
 echo ""
