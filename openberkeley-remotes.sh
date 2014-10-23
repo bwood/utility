@@ -17,6 +17,7 @@ git remote add -f openberkeley_pages $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/openberk
 git remote add -f openberkeley_pages-upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley_pages.git 
 git remote add -f openberkeley_starter $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/openberkeley_starter.git 
 git remote add -f openberkeley_starter-upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley_starter.git 
-git remote add -f ucberkeley_cas $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_cas-7-test.git 
-git remote add -f ucberkeley_cas-upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/ucberkeley_cas-7.git 
-git remote add -f upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley-drops-7.git 
+# while ucberkeley_cas is owned by bwood these next two will be the same
+git remote add -f ucberkeley_cas $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_cas-7.git 
+git remote add -f ucberkeley_cas-upstream $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_cas-7.git 
+git remote add -f upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley-7.git 
