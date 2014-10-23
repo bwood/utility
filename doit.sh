@@ -1,13 +1,11 @@
 #!/bin/bash
-
+# remove datestamps from all .info files
 if [ $(PAGER=cat man sed |grep -c -e "^BSD") -gt 0 ]; then
-  # remove datestamps from all .info files
   # FreeBSD sed (e.g. MacOS)
-  echo "BSD"
+  echo "bsd"
   find modules -name "*.info" -print0 |xargs -0 sed -i "" -e 's/datestamp = \"[[:digit:]]\{1,\}\".*//' -e 's/Information added by drush on [[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\}/Information added by drush/'
 else
-  # remove datestamps from all .info files
-  echo "not BSD"
+  # not BSD sed
   find modules -name "*.info" -print0 |xargs -0 sed -i -e 's/datestamp = \"[[:digit:]]\{1,\}\".*//' -e 's/Information added by drush on [[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\}/Information added by drush/'
 fi
 
