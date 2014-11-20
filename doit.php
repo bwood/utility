@@ -1,5 +1,46 @@
 <?php
 
+/*
+ * migrate-ob.php
+ * fork a process
+ */
+
+print "\n*** Okay! Let's run pre-upgrade.sh. ***\n";
+
+if (strpos(file_get_contents($pantheon_aliases), $site_name) === FALSE) {
+  print "$site_name not found in your $pantheon_aliases. Refetching aliases...\n";
+  exec("$drush paliases");
+}
+
+if (strpos(file_get_contents($pantheon_aliases), $site_name) === FALSE) {
+  print "Error $site_name STILL not found in your $pantheon_aliases. Aborting.\n";
+  exit(1);
+}
+//$pre_upgrade_cmd = "$clone_path/$site_name-premigrate/profiles/openberkeley/scripts/ob_0.1_upgrade/pre-upgrade.sh @pantheon.$site_name.dev";
+$pre_upgrade_file = "$clone_path/pre-upgrade.sh";
+
+if (file_exists($pre_upgrade_file)) {
+  if (!chmod($pre_upgrade_file, 0755)) {
+    print "Please make $pre_upgrade_file executable.";
+    yesno("Yes when you are done. (No to abort.)");
+  }
+}
+else {
+  print "Please copy pre-upgrade.sh to $clone_path and make it executable.";
+  yesno("Yes when you are done. (No to abort.)");
+}
+$pre_upgrade_cmd = "$pre_upgrade_file @pantheon.$site_name.dev";
+print $pre_upgrade_cmd . "\n";
+//exec($pre_upgrade_cmd, $output, $return);
+//unset($output);
+$handle = popen($pre_upgrade_cmd, "r");
+echo "'$handle'; " . gettype($handle) . "\n";
+$read = fread($handle, 2096);
+echo $read;
+pclose($handle);
+
+
+exit;
 
 $data = 'a:8:{s:4:"name";s:14:"message_notify";s:4:"info";a:6:{s:4:"name";s:14:"Message notify";s:7:"package";s:7:"Message";s:7:"version";s:7:"7.x-2.5";s:7:"project";s:14:"message_notify";s:9:"datestamp";s:10:"1366630876";s:16:"_info_file_ctime";i:1383255563;}s:9:"datestamp";s:10:"1366630876";s:8:"includes";a:1:{s:14:"message_notify";s:14:"Message notify";}s:12:"project_type";s:6:"module";s:14:"project_status";b:1;s:10:"sub_themes";a:0:{}s:11:"base_themes";a:0:{}}';
 print_r(unserialize($data));
