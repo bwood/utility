@@ -1,4 +1,9 @@
 #!/bin/bash
+cmd=$(drush psite-tunnel 6af40837-246b-44d2-9b8a-228d2cebba39 dev mysql)
+echo $cmd
+exit
+########
+
 # remove datestamps from all .info files
 if [ $(PAGER=cat man sed |grep -c -e "^BSD") -gt 0 ]; then
   # FreeBSD sed (e.g. MacOS)

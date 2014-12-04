@@ -1,5 +1,10 @@
 <?php
 
+// ring the terminal bell?
+echo "\007";
+
+exit;
+
 /*
  * migrate-ob.php
  * fork a process
