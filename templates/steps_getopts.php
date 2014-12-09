@@ -1,4 +1,28 @@
 <?php
+/*
+ * Global variables
+ */
+/*
+$drush_path = exec('which drush');
+$pantheon_aliases = $_SERVER['HOME'] . '/.drush/pantheon.aliases.drushrc.php';
+$git = exec('which git');
+$diff = exec('which diff');
+$sshfs = exec('which sshfs');
+
+if (!is_executable($drush_path)) {
+  print "We found your drush at:\n$drush_path\n...but it's not executable.";
+  print "Please fix that.\n";
+  exit(1);
+}
+else {
+  $drush = $drush_path . " --strict=0 ";
+}
+
+if ((!file_exists($pantheon_aliases)) || (!is_readable($pantheon_aliases))) {
+  print "Error: $pantheon_aliases doesn't exist or isn't readable\n";
+  exit(1);
+}
+*/
 $usage = <<<EOT
 
 USAGE:
