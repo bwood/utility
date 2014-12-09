@@ -40,6 +40,9 @@ else {
 
 if (array_key_exists('B', $options)) {
   $begin = $options['B'];
+  if ($begin == 0 ) {
+    print "-B0 is meaningless. Ignoring.\n";
+  }
   if ($begin > count($steps)) {
     print "Error: -B ($begin) must be less than or equal to " . count($steps) . "\n";
     exit(1);
@@ -53,20 +56,30 @@ else {
 if (array_key_exists('E', $options)) {
   //is_numeric and <= array_pop($steps)
   $end = $options['E'];
+  if ($end == 0 ) {
+    print "-E0 is meaningless. Ignoring.\n";
+  }
   if ($end > count($steps)) {
     print "Error: -E ($end) must be less than or equal to " . count($steps) . "\n";
     exit(1);
   }
-  (($end > 0) && ($end <= count($steps))) ? $end = $end - count($steps) : $end = 0;
+  if (($end > 0) && ($end <= count($steps))) {
+    $end = $end - count($steps);
+  }
+  else {
+    $end = 0;
+  }
 }
 else {
   $end = NULL;
 }
 
-if (abs($end) < $begin) {
-  print "Error: -E ($end) must be greater than -B ($begin)\n";
-}
+$first_step = $begin + 1;
+$last_step = count($steps) + $end;
 
+if (($end !== NULL) && ($last_step < $first_step)) {
+  print "Error: -E ($last_step) must be greater than or equal to -B ($first_step)\n";
+}
 
 $steps = array_slice($steps, $begin, $end);
 
