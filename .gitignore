@@ -1,3 +1,7 @@
+# Composer #
+############
+vendor
+
 # Packages #
 ############
 *.7z

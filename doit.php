@@ -1,4 +1,239 @@
 <?php
+
+putenv("DRUSH_SCRIPT=drush8");
+print "drush script:" . getenv("DRUSH_SCRIPT") . "\n";
+
+exit;
+
+function thisisfalse() {
+  return FALSE;
+}
+
+print "FALSE = " . FALSE . "\n";
+print "TRUE = " . TRUE . "\n";
+if ($x = thisisfalse() === FALSE) {
+  print "compare false\n";
+  print "x=$x\n";
+}
+else {
+  print "compare not false\n";
+  print "x=$x\n";
+}
+
+exit;
+
+function replace_strings($subject, $user_patterns = array(), $replacements = array()) {
+  $patterns = array(
+    "/RSA host key for IP address '[\d]{1,3}.[\d]{1,3}.[\d]{1,3}.[\d]{1,3}' not in list of known hosts\./"
+  );
+  $patterns = array_merge($patterns, $user_patterns);
+  return preg_replace($patterns, $replacements, $subject);
+}
+
+
+$output = array(
+  "RSA host key for IP address '23.253.170.75' not in list of known hosts.",
+  'array (',
+  '"this",',
+  ");"
+);
+
+var_dump(replace_strings($output));
+
+exit;
+
+if ($result = drush_upc(0)) {
+  if (is_array($result)) {
+    print_r($result);
+  }
+  else {
+    print "result=$result\n";
+  }
+}
+
+function drush_upc($x) {
+  if ($x == 1) {
+    return true;
+  }
+  return array('one', 'two');
+}
+exit;
+
+$dates ='';
+for($i=0; $i<5; $i++) {
+  exec("date", $output, $return);
+  //print $output[0];
+  $dates .= $output[0];
+}
+print $dates . "\n";
+exit;
+
+require 'vendor/autoload.php';
+
+
+exit;
+
+/*
+
+    $instructions = "Enter the original site name (For \"http://dev-example.pantheon.berkeley.edu\" you'd enter \"example\")";
+    $site_name_orig = take_input($instructions);
+    while (yesno("You entered '" . $site_name_orig . "'. Is that correct? ", TRUE) === FALSE) {
+      $site_name_orig = take_input($instructions);
+    }
+  }
+*/
+$json = '[{"label":"\'UC Berkeley - Testing\'","name":"uc-berkeley-testing","role":"team_member","id":"430c1947-354f-459a-8755-f38293aef105"}]';
+$site_orgs = json_decode($json, TRUE);
+if (count($site_orgs) < 1) {
+   print "\nError: The target site is not affiliated with an organization.\n";
+}
+print_r($site_orgs);
+
+exit;
+
+$page = new stdClass();
+$page->task = '';
+$page->name = '';
+
+exit;
+
+
+check_psite_jobs('cache_clear_dev', '7a36bd93-864a-4f85-8821-36ef6f865014');
+/**
+ * Check for completion of a job
+ *
+ * @param $slot
+ * @param $uuid Either the source or target site uuid
+ * @param int $poll
+ * @return bool
+ */
+function check_psite_jobs($slot, $uuid, $poll = 60) {
+  global $drush;
+
+  $psite_jobs_cmd = "drush psite-jobs $uuid --slot=$slot";
+  print $psite_jobs_cmd . "\n";
+
+  $complete = FALSE;
+  $i = 0;
+  while (($i < $poll) && ($complete == FALSE)) {
+    exec($psite_jobs_cmd, $output, $return);
+    $date_now = date_now_rfc822();
+    $date_min_ago = date_min_ago($date_now);
+    if ($i > 19) {
+      print "==> Jobs on Pantheon might backlogged. (Check $i of $poll) <==\n";
+    }
+    print "\n$i: Checking for $slot between $date_min_ago - $date_now...\n";
+    //foreach ($output as $out) {
+    $out = implode(" ", $output);
+    // also look for $date_min_ago on off chance job started at 12:59:59 and $date_now is 13:00:00
+    if ((strpos($out, 'Y          SUCCESS') !== FALSE) &&
+      ((strpos($out, $date_now) !== FALSE) || (strpos($out, $date_min_ago) !== FALSE))
+    ) {
+      print "\nMatch:\n\t$out\n\n";
+      $complete = TRUE;
+      return TRUE;
+    }
+    print "No match: $out\n";
+    unset($output);
+    unset($out);
+    //}
+    sleep(3);
+    $i++;
+  }
+
+  // Stop trying after $poll attempts
+  if (($i == $poll) && ($complete === FALSE)) {
+    print "\nError: We never found this job: $slot\n\n";
+    print wordwrap("Check this site's dashboard to see if the job has run. If it hasn't there might be a backup in the Pantheon job queue. When you see the job complete on the dashboard, return run this script again beginning with the next step.\n", 80);
+    exit(1); //TODO: handle return false
+  }
+}
+
+function date_now_rfc822() {
+  // DATE_RFC822 without the seconds
+  date_default_timezone_set('UTC');
+  return date("D, d M y H:i");
+}
+
+function date_min_ago($date) {
+  $parts = explode(":", $date);
+  $min_ago = $parts[1] - 1;
+  if ($min_ago < 10) {
+    $min_ago = "0" . $min_ago;
+  }
+  return $parts[0] . ":" . $min_ago;
+}
+
+
+exit;
+
+check_psite_jobs('update_database_dev', 0);
+
+function check_psite_jobsZZ($slot, $uuid, $poll = 60) {
+  global $drush;
+
+  $psite_jobs_cmd = "$drush psite-jobs $uuid --slot=$slot";
+  //print $psite_jobs_cmd . "\n";
+
+  $complete = FALSE;
+  $i = 0;
+  while (($i < $poll) && ($complete == FALSE)) {
+    //exec($psite_jobs_cmd, $output, $return);
+
+    $output = array(
+      'Slot                 Name               Env  Completed  Status  Duration  Updated',
+      'update_database_dev  Run update.php in  dev  N                  13.28s    Tue, 23 Dec 14 00:22:37 +0000',
+      'Slot                 Name               Env  Completed  Status   Duration  Updated',
+      'update_database_dev  Run update.php in  dev  Y          SUCCESS  14.77s    Tue, 23 Dec 14 00:23:03 +0000',
+    );
+
+//    $date_now = date_now_rfc822();
+//    $date_min_ago = date_min_ago($date_now);
+    $date_now = 'Tue, 23 Dec 14 00:23';
+    $date_min_ago = 'Tue, 23 Dec 14 00:22';
+    if ($i > 19) {
+      print "==> Jobs on Pantheon might backlogged. (Check $i of $poll) <==\n";
+    }
+    print "\n$i: Checking for $slot between $date_min_ago - $date_now...\n";
+    foreach ($output as $out) {
+      // also look for $date_min_ago on off chance job started at 12:59:59 and $date_now is 13:00:00
+      if ((strpos($out, 'Y          SUCCESS') !== FALSE) &&
+        ((strpos($out, $date_now) !== FALSE) || (strpos($out, $date_min_ago) !== FALSE))
+      ) {
+        print "\nMatch:\n\t$out\n\n";
+        $complete = TRUE;
+        return TRUE;
+      }
+      print "No match: $out\n";
+      unset($output);
+      unset($out);
+    }
+    sleep(3);
+    $i++;
+  }
+
+  // Stop trying after $poll attempts
+  if (($i == $poll) && ($complete === FALSE)) {
+    print "\nError: We never found this job: $slot\n\n";
+    print wordwrap("Check this site's dashboard to see if the job has run. If it hasn't there might be a backup in the Pantheon job queue. When you see the job complete on the dashboard, return run this script again beginning with the next step.\n", 80);
+    exit(1); //TODO: handle return false,
+  }
+}
+
+exit;
+
+
+date_default_timezone_set('UTC');
+// DATE_RFC822 without the seconds
+$date_now = date("D, d M y H:i");
+$parts = explode(":", $date_now);
+$min_ago = $parts[1] - 1;
+$date_min_ago = $parts[0] . ":" . $min_ago;
+print "$date_now\n";
+print "$date_min_ago\n";
+print "$min_ago\n";
+exit;
+
 /**
  * Copy remote file over HTTP one small chunk at a time.
  *
@@ -16,8 +251,8 @@ function copyfile_chunked($infile, $outfile) {
   $i_handle = fsockopen($parts['host'], 80, $errstr, $errcode, 5);
   $o_handle = fopen($outfile, 'wb');
 
-  if ($i_handle == false || $o_handle == false) {
-    return false;
+  if ($i_handle == FALSE || $o_handle == FALSE) {
+    return FALSE;
   }
 
   if (!empty($parts['query'])) {
@@ -39,9 +274,11 @@ function copyfile_chunked($infile, $outfile) {
    * to get the content length.
    */
   $headers = array();
-  while(!feof($i_handle)) {
+  while (!feof($i_handle)) {
     $line = fgets($i_handle);
-    if ($line == "\r\n") break;
+    if ($line == "\r\n") {
+      break;
+    }
     $headers[] = $line;
   }
 
@@ -50,9 +287,9 @@ function copyfile_chunked($infile, $outfile) {
    * of the remote file.
    */
   $length = 0;
-  foreach($headers as $header) {
+  foreach ($headers as $header) {
     if (stripos($header, 'Content-Length:') === 0) {
-      $length = (int)str_replace('Content-Length: ', '', $header);
+      $length = (int) str_replace('Content-Length: ', '', $header);
       break;
     }
   }
@@ -62,19 +299,21 @@ function copyfile_chunked($infile, $outfile) {
    * local file one chunk at a time.
    */
   $cnt = 0;
-  while(!feof($i_handle)) {
+  while (!feof($i_handle)) {
     $buf = '';
     $buf = fread($i_handle, $chunksize);
     $bytes = fwrite($o_handle, $buf);
-    if ($bytes == false) {
-      return false;
+    if ($bytes == FALSE) {
+      return FALSE;
     }
     $cnt += $bytes;
 
     /**
      * We're done reading when we've reached the conent length
      */
-    if ($cnt >= $length) break;
+    if ($cnt >= $length) {
+      break;
+    }
   }
 
   fclose($i_handle);
@@ -101,11 +340,11 @@ $file_gz = '/tmp/' . $archive;
 //$file_tar = preg_replace("/\.gz$/", "", $file_gz);
 
 set_time_limit(0);
-$fp = fopen ($file_gz, 'w+');
+$fp = fopen($file_gz, 'w+');
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_TIMEOUT, 50);
 curl_setopt($ch, CURLOPT_FILE, $fp); // write curl response to file
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
 curl_exec($ch); // get curl response
 curl_close($ch);
 fclose($fp);
@@ -142,7 +381,8 @@ try {
   $gzip_file = new PharData($file_gz);
   //$tar_file = $gzip_file->decompress(); // creates /path/to/my.tar
   $gzip_file->decompress(); //now $file_tar exists
-} catch (Exception $e) {
+}
+catch (Exception $e) {
   print "Error unzipping.\n";
   print $e->getMessage();
 }
@@ -151,7 +391,8 @@ try {
   //$tar_file->extractTo('/tmp');
   $tar_file = new PharData($file_tar);
   $tar_file->extractTo('/Users/bwood/tmp/test2');
-} catch (Exception $e) {
+}
+catch (Exception $e) {
   print "Error untarring.\n";
   print $e->getMessage();
 }
@@ -235,14 +476,16 @@ $cmd = 'drush psite-delete `drush psite-uuid ucb-train-editor-00` -y';
 $pattern = '/-\d+`/';
 
 
-for ($i=50; $i<52; $i++) {
+for ($i = 50; $i < 52; $i++) {
   ($i < 10) ? $I = "0$i" : $I = $i;
   $out = NULL;
   //$replace = "-$i.";
   $replace = "-$I`";
   $cmd = preg_replace($pattern, $replace, $cmd);
   print "$cmd\n";
-  if (!$test) exec($cmd, $out);
+  if (!$test) {
+    exec($cmd, $out);
+  }
   //print implode("\n", $out);
   //print "\n";
 }

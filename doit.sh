@@ -1,4 +1,23 @@
 #!/bin/bash
+
+OLDIFS=$IFS
+IFS=','
+COMMANDS=ls,find,make\ \-f\ \$this,yes
+read -a array <<< "$COMMANDS"
+echo ${array[2]}
+IFS=$OLDIFS
+
+exit
+#######
+
+
+BUILD=nomk-noup
+echo `expr substr "$BUILD" 1 4`
+echo `expr substr "$BUILD" 6`
+
+exit
+#######
+
 cmd=$(drush psite-tunnel 6af40837-246b-44d2-9b8a-228d2cebba39 dev mysql)
 echo $cmd
 exit
