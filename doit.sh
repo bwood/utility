@@ -1,5 +1,40 @@
 #!/bin/bash
 
+
+#grep a file every 15 sec
+i=1
+while [ $i -lt 401 ]; do
+  echo "check $i"
+  grep 'WD ldap_server' /Users/bwood/tmp/openucb-768_out.txt
+  ((i++))
+  sleep 15
+done
+exit
+######
+
+// openucb-768 test ldap errors
+
+uids=(213108 304629 248324 267087)
+names=('Anna Gazdowicz' 'Brian Wood' 'Caroline Boyden' 'Kathleen Lu')
+
+i=1
+while [ $i -lt 20 ]; do
+  echo "Attempt: $i"
+  for name in "${names[@]}"; do
+    echo "drush @ob7 ucan \"$name\""
+    drush @ob7 ucan "$name" -y
+  done
+
+  for uid in "${uids[@]}"; do
+    echo "drush @ob7 cas-user-create $uid"
+    drush @ob7 cas-user-create $uid -y
+  done;
+  ((i++))
+done
+
+exit
+######
+
 OLDIFS=$IFS
 IFS=','
 COMMANDS=ls,find,make\ \-f\ \$this,yes

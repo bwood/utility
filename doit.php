@@ -1,5 +1,85 @@
 <?php
 
+
+
+exit;
+
+$x = array('status' => 1, 'view modes' => array('page_manager' => array('status' => 1, 'default' => 1, 'choice' => 0,), 'default' => array('status' => 0, 'default' => 0, 'choice' => 0,), 'featured' => array('status' => 0, 'default' => 0, 'choice' => 0,)));
+
+print_r($x);
+exit;
+// create a new cURL resource
+$ch = curl_init();
+
+// set URL and other appropriate options
+curl_setopt($ch, CURLOPT_URL, "http://berkeley.edu/");
+curl_setopt($ch, CURLOPT_HEADER, 0);
+
+// grab URL and pass it to the browser
+curl_exec($ch);
+
+// close cURL resource, and free up system resources
+curl_close($ch);
+
+
+exit;
+$hosts = array(
+  'auth.berkeley.edu' => gethostbyname('auth.berkeley.edu'),
+  'auth-test.berkeley.edu' => gethostbyname('auth-test.berkeley.edu')
+);
+
+$port = 443;
+
+foreach ($hosts as $host => $ip) {
+  if ($fp = fsockopen($ip, $port, $errCode, $errStr, 2)) {
+    print "$host ($ip): SUCCESS\n";
+  }
+  else {
+    print "$host ($ip): Failure.\n";
+  }
+  fclose($fp);
+}
+
+exit;
+
+$to = 'nobody@example.com';
+$subject = 'the subject';
+$message = 'hello';
+$headers = 'From: webmaster@example.com' . "\r\n" .
+  'Reply-To: webmaster@example.com' . "\r\n" .
+  'X-Mailer: PHP/' . phpversion();
+
+
+if (!mail($to, $subject, $message, $headers)) {
+  print "can't send\n";
+}
+else {
+  print "sent\n";
+}
+
+exit;
+
+$url = 'https://pantheon-backups.s3.amazonaws.com/55c57672-38df-448f-aad8-5eb7df7de155/dev/1429574271_backup/orgadd-test-bw_dev_2015-04-20T23-57-51_UTC_files.tar.gz?Signature=p2qUElLdxYSh%2F4SSrBDxKHEE%2BJ4%3D&Expires=1429575032&AWSAccessKeyId=AKIAJEYKXMCPBZQYJYXQ';
+$opts = array(
+  'http' =>
+    array(
+      'method' => 'GET',
+    )
+);
+
+$context = stream_context_create($opts);
+$stream = fopen($url, 'r', FALSE, $context);
+
+// header information as well as meta data
+// about the stream
+var_dump(stream_get_meta_data($stream));
+
+// actual data at $url
+var_dump(stream_get_contents($stream));
+fclose($stream);
+
+exit;
+
 putenv("DRUSH_SCRIPT=drush8");
 print "drush script:" . getenv("DRUSH_SCRIPT") . "\n";
 
@@ -53,14 +133,15 @@ if ($result = drush_upc(0)) {
 
 function drush_upc($x) {
   if ($x == 1) {
-    return true;
+    return TRUE;
   }
   return array('one', 'two');
 }
+
 exit;
 
-$dates ='';
-for($i=0; $i<5; $i++) {
+$dates = '';
+for ($i = 0; $i < 5; $i++) {
   exec("date", $output, $return);
   //print $output[0];
   $dates .= $output[0];
@@ -85,7 +166,7 @@ exit;
 $json = '[{"label":"\'UC Berkeley - Testing\'","name":"uc-berkeley-testing","role":"team_member","id":"430c1947-354f-459a-8755-f38293aef105"}]';
 $site_orgs = json_decode($json, TRUE);
 if (count($site_orgs) < 1) {
-   print "\nError: The target site is not affiliated with an organization.\n";
+  print "\nError: The target site is not affiliated with an organization.\n";
 }
 print_r($site_orgs);
 
