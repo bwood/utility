@@ -17,11 +17,6 @@ fi
 
 DIR="$PROJDIR/$SUBDIR/$MODULE"
 
-if [ ! -d "$DIR" ] || [ ! -w "$DIR" ]; then
-  echo "Not a valid path or not writable: $DIR"
-  exit 1
-fi
-
 if [[ $REPO =~ "https://" ]]; then
   echo "Please use the ssh version of the git url so your key will be used for authentication."
   exit 1
@@ -35,10 +30,15 @@ if [ -z "$REF" ]; then
   REF="master"
 fi
 
-# use rm. sometimes git rm -rf misses subdirectories. strange.
-rm -rf $DIR
-git add --all
-git commit -am "Convert $MODULE to subtree"
+
+# If the directory exists remove it so we can do the subtree add
+if [ -d "$DIR" ]; then
+  # use rm. sometimes git rm -rf misses subdirectories. strange.  
+  rm -rf $DIR
+  git add $DIR
+  git commit -am "Convert $MODULE to subtree"
+fi
+
 git subtree add --prefix=$DIR $REPO $REF --squash
 echo ""
 echo "Executed:"
