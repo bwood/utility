@@ -17,7 +17,15 @@ git remote add -f openberkeley_pages $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/openberk
 git remote add -f openberkeley_pages-upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley_pages.git 
 git remote add -f openberkeley_starter $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/openberkeley_starter.git 
 git remote add -f openberkeley_starter-upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley_starter.git 
-# while ucberkeley_cas is owned by bwood these next two will be the same
+git remote add -f openberkeley_twitter $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/openberkeley_twitter.git 
+git remote add -f openberkeley_twitter-upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley_twitter.git 
+git remote add -f openberkeley_widgets $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/openberkeley_widgets.git 
+git remote add -f openberkeley_widgets-upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley_widgets.git 
+# while ucberkeley_cas and ucberekely_envconf are owned by bwood these next two will be the same
 git remote add -f ucberkeley_cas $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_cas-7.git 
 git remote add -f ucberkeley_cas-upstream $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_cas-7.git 
+git remote add -f ucberkeley_envconf $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_envconf-7.git 
+git remote add -f ucberkeley_envconf-upstream $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_envconf-7.git 
+git remote add -f ucberkeley_website $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_website-7.git 
+git remote add -f ucberkeley_website-upstream $GIT_PROTOCOL$GIT_DOMAIN:$GIT_USER/ucberkeley_website-7.git 
 git remote add -f upstream $GIT_PROTOCOL$GIT_DOMAIN:ucb-ist-drupal/openberkeley-7.git 
