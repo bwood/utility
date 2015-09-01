@@ -1,6 +1,47 @@
 <?php
 
+/**
+ * Regular expressions for Terminus output strings that should be ignored.
+ * TODO: Adjust per https://github.com/pantheon-systems/cli/issues/413
+ *
+ * @return array
+ */
+function terminus_output_ignore() {
+  return array(
+    'Warning: There is a newer version of Terminus.*$',
+  );
+}
 
+function terminus_output_filter($string) {
+  foreach (terminus_output_ignore() as $pattern)
+    if (preg_match("/$pattern/", $string)) {
+      // if there's a match, return false to filter the match from the output
+      return FALSE;
+    }
+  return TRUE;
+}
+
+/**
+ * Filter terminus output
+ * Refer to https://github.com/pantheon-systems/cli/issues/413
+ *
+ * @param $command
+ * @param $output
+ * @param $return
+ */
+function terminus_exec($command, &$output, &$return) {
+  $ignore_strings = terminus_output_ignore();
+  exec($command, $output, $return);
+  //preg_replace("/$ignore_strings/", "");
+  $output = array_filter($output, 'terminus_output_filter');
+  //$output = array_diff($output, $ignore_strings);
+}
+
+$cmd = 'terminus site info --site=websolutions-ob';
+terminus_exec($cmd, $output, $return);
+print "$cmd\n";
+print "Return value: " . $return. "\n";
+print_r($output);
 
 exit;
 
