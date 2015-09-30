@@ -1,5 +1,95 @@
 #!/bin/bash
 
+# openucb-957. I ended up not using this.
+
+BACKUP_CAS_SERVER="cas-p4.calnet.berkeley.edu"
+
+echo ""
+echo "This script can enable or disable the backup CAS server 
+($BACKUP_CAS_SERVER) for sites. "
+echo ""
+echo "What do you want to do:"
+echo "[1] Enable $BACKUP_CAS_SERVER"
+echo "[2] Disable $BACKUP_CAS_SERVER"
+read ACTION
+if [ "$ACTION" == 1 ]; then
+  SERVER=$BACKUP_CAS_SERVER;
+  MODULE_ACTION="dis"
+  DONE_ACTION="ENABLED"
+elif [ "$ACTION" == 2 ]; then
+  # If ucberkeley_envconf is enabled, we don't really need a value.
+  SERVER="" 
+  MODULE_ACTION="en"
+  DONE_ACTION="DISABLED"
+else 
+  echo "Please choose 1 or 2."
+fi
+
+echo ""
+echo "Enter the shortname (e.g. webaccess-ob7) of the site(s). 
+Separate multiple names with spaces:" 
+IFS=' ' 
+read -a SHORTNAMES
+echo ""
+echo "Which environment?"
+echo "[1] live"
+echo "[2] test"
+echo "[3] dev"
+echo "[4] live and test"
+echo "[5] live, test and dev"
+read ENV
+echo ""
+if [ "$ENV" == 1 ];then
+  ENV=( live )
+fi
+if [ "$ENV" == 2 ];then
+  ENV=( test )
+fi
+if [ "$ENV" == 3 ];then
+  ENV=( dev )
+fi
+if [ "$ENV" == 4 ];then
+  ENV=( live test )
+fi
+if [ "$ENV" == 5 ];then
+  ENV=( live test dev )
+fi
+
+for SHORTNAME in "${SHORTNAMES[@]}"; do
+  for ENVIRONMENT in "${ENV[@]}"; do
+    # wake up the non-live sites
+    if [ $ENVIRONMENT != "live" ]; then
+      terminus site wake --site=$SHORTNAME --env=$ENVIRONMENT
+    fi
+
+    # disable envconf
+    drush --strict=0  @pantheon.$SHORTNAME.$ENVIRONMENT $MODULE_ACTION ucberkeley_envconf -y
+    #echo "    drush --strict=0  @pantheon.$SHORTNAME.$ENVIRONMENT $MODULE_ACTION ucberkeley_envconf -y"
+  
+    # On disable set the CAS server so that 'drush vget cas_server' shows the right thing.
+    if [ $ENVIRONMENT == "live" ] && [ $DONE_ACTION == "DISABLED" ]; then
+     SERVER="auth.berkeley.edu"
+    elif [ $ENVIRONMENT != "live" ] && [ $DONE_ACTION == "DISABLED" ]; then
+     SERVER="auth-test.berkeley.edu"
+    fi
+
+    # set cas_server
+    drush --strict=0  @pantheon.$SHORTNAME.$ENVIRONMENT vset cas_server $SERVER 
+    #echo "    drush --strict=0  @pantheon.$SHORTNAME.$ENVIRONMENT vset cas_server $SERVER"
+
+    echo ""
+    echo "Done: $SHORTNAME.$ENVIRONMENT: Backup CAS server $DONE_ACTION"
+    echo ""
+  done
+done
+
+echo ""
+echo "Disregard the harmless syntax error which occurs on Enable actions."
+echo ""
+
+
+exit
+####
 
 #grep a file every 15 sec
 i=1

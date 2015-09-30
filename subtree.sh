@@ -4,18 +4,39 @@ export PATH=~/bin:~/bin/drush:~/bin/utility:/usr/local/bin:/usr/bin:~/workspace/
 MODULE=$1
 REPO=$2
 REF=$3
-PROJDIR="profiles/openberkeley/modules"
+PREFIX=$4
+PREFIX_DEFAULT="profiles/openberkeley/modules"
 
-if [[ $MODULE =~ "openberkeley_" ]]; then
-  SUBDIR="openberkeley"
-elif [[ $MODULE =~ "ucberkeley_" ]]; then
-  SUBDIR="ucb"
-else
-  echo "Can't determine SUBDIR for this module."
-  exit 1
+if [ -z "$MODULE" ]; then
+  echo "Setup a module directory as a git subtree."
+  echo ""
+  echo "Usage:"
+  echo ""
+  echo "$0 [module-name] [repo-alias-or-url] [branch] [prefix-dir: default=$PREFIX_DEFAULT]"
+  echo ""
+  echo "E.g:"
+  echo ""
+  echo "$0 openberkeley_twitter openberkeley_twitter master"
+  echo "$0 ucberkeley_uhs git@github-bwood.com:bwood/ucberkeley_uhs.git master sites/all/modules"
+  echo ""
+  exit 0
 fi
 
-DIR="$PROJDIR/$SUBDIR/$MODULE"
+if [ -z "$PREFIX" ]; then
+  PREFIX=$PREFIX_DEFAULT
+  if [[ $MODULE =~ "openberkeley_" ]]; then
+    SUBDIR="openberkeley/"
+  elif [[ $MODULE =~ "ucberkeley_" ]]; then
+    SUBDIR="ucb/"
+  else
+    echo "Can't determine SUBDIR for this module."
+    exit 1
+  fi
+else
+  SUBDIR=""
+fi
+
+DIR="$PREFIX/$SUBDIR$MODULE"
 
 if [[ $REPO =~ "https://" ]]; then
   echo "Please use the ssh version of the git url so your key will be used for authentication."
